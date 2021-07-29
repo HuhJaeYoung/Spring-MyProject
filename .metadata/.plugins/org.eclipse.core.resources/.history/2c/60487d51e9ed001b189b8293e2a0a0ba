@@ -1,0 +1,43 @@
+package com.jaeyoung.blog.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.jaeyoung.blog.repository.PatientStatusBoardRepository;
+import com.jaeyoung.blog.service.CounselorService;
+import com.jaeyoung.blog.service.PatientStatusBoardService;
+
+@Controller
+public class PatientStatusBoardController {
+	
+	@Autowired
+	private PatientStatusBoardService patientStatusBoardService;
+
+	@Autowired
+	private CounselorService counselorService;
+	
+	@GetMapping("/counselor/patientStatus/{patientId}/{counselorId}/review")
+	public String patientReviewLists(@PathVariable int patientId, @PathVariable int counselorId, Model model,@PageableDefault(size=5,sort="id",direction = Sort.Direction.DESC) Pageable pageable) {
+		model.addAttribute("patientStatusBoards",patientStatusBoardService.환자차트목록(patientId, counselorId, pageable));
+		model.addAttribute("patient", counselorService.환자상세보기(patientId));
+		return "counselor/counselorReviewLists";
+	}
+
+	@GetMapping("/counselor/patientStatus/{patientId}/{counselorId}/reviewWrite")
+	public String patientReviewWrite(@PathVariable int patientId, @PathVariable int counselorId, Model model) {
+		model.addAttribute("patient", counselorService.환자상세보기(patientId));
+		return "counselor/counselorReviewWrite";
+	}
+	@GetMapping("/counselor/patientStatus/{id}")
+	public String findById(@PathVariable int id,Model model) {
+		model.addAttribute("patientStatusBoard",patientStatusBoardService.차트상세보기(id));
+		return "/counselor/counselorReviewDetail";
+	}
+}

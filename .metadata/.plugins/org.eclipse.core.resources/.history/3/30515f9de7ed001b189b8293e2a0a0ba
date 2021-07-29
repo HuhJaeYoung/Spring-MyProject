@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ include file="../layout/header.jsp"%>
+<div class="container">
+
+	<button class="btn btn-secondary" onclick="history.back()">돌아가기</button>
+	<c:if
+		test="${patientStatusBoard.user.id==principal.user.id or principal.user.role eq 'ADMIN'}">
+		<a
+			href="/counselor/patientStatus/${patientStatusBoard.id}/patientReviewUpdateform"
+			class="btn btn-warning">수정</a>
+		<button id="btn-notice-delete" class="btn btn-danger">삭제</button>
+	</c:if>
+	<br /> <br />
+	<div>
+		차트 작성 일시 : <span id="patientStatusBoardDate"><i>${patientStatusBoard.createDate}
+		</i> </span>
+
+	</div>
+	<br />
+	<div class="container p-3 my-3 border">
+		<h2>환자 이름 : ${patientStatusBoard.patient.user.username} </h2>
+		<div>작성자 : ${patientStatusBoard.user.username }</div>
+	</div>
+	<div class="container p-3 my-3 border">
+		<h3>환자 상태 : ${patientStatusBoard.patientStatus}</h3>
+	</div>
+	<hr />
+
+	<div class="container p-3 my-3 border">
+		상태 상세 내용 :
+		<div>${patientStatusBoard.patientContent}</div>
+	</div>
+	<div class="container p-3 my-3 border">
+		환자 처방 :
+		<div>${patientStatusBoard.prescription}</div>
+	</div>
+	<div class="container p-3 my-3 border">
+		치료 계획 :
+		<div>${patientStatusBoard.treatmentPlan}</div>
+	</div>
+	<hr />
+	<br />
+</div>
+
+<script src="/js/counselor.js"></script>
+<%@ include file="../layout/footer.jsp"%>

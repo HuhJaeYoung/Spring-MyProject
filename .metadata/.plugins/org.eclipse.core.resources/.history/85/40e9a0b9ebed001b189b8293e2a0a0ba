@@ -1,0 +1,40 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ include file="../layout/header.jsp"%>
+<div class="container">
+	<input type="hidden" id="patientId" value="${patient.id }" />
+	<input type="hidden" id="userId" value="${principal.user.id}" />
+	<form>
+		<input type ="hidden" id="id" value="${patientStatusBoard.id}"/>
+		<div class="form-group">
+
+			<input type="text" class="form-control" placeholder="환자상태 입력"
+				id="patientStatus">
+		</div>
+		<div class="form-group">
+			<label for="comment">상세한 환자 상태, 상담내용:</label>
+			<textarea class="form-control" rows="5" id="patientContent"></textarea>
+		</div>
+			<div class="form-group">
+			<label for="comment">처방:</label>
+			<textarea class="form-control" rows="5" id="prescription"></textarea>
+		</div>
+			<div class="form-group">
+			<label for="comment">향후 치료 계획:</label>
+			<textarea class="form-control" rows="5" id="treatmentPlan"></textarea>
+		</div>
+	</form>
+	<button id="btn-counselor-update" class="btn btn-primary">차트 수정
+		완료</button>
+</div>
+
+<script>
+	$('.summernote').summernote({
+		tabsize : 2,
+		height : 300
+	});
+</script>
+<script src="/js/counselor.js"></script>
+<%@ include file="../layout/footer.jsp"%>
+

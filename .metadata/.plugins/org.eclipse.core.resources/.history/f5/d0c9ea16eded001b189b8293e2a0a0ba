@@ -1,0 +1,61 @@
+package com.jaeyoung.blog.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jaeyoung.blog.model.Board;
+import com.jaeyoung.blog.model.MbtiBoard;
+import com.jaeyoung.blog.model.Patient;
+import com.jaeyoung.blog.model.PatientStatusBoard;
+import com.jaeyoung.blog.model.User;
+import com.jaeyoung.blog.repository.PatientRepository;
+import com.jaeyoung.blog.repository.PatientStatusBoardRepository;
+
+@Service
+public class PatientStatusBoardService {
+
+	@Autowired
+	private PatientStatusBoardRepository patientStatusBoardRepository;
+	
+	@Autowired 
+	private PatientRepository patientRepository;
+
+
+	@Transactional(readOnly=true)
+	public Page<PatientStatusBoard> 환자차트목록(int patientId, int counselorId,Pageable pageable){
+		return patientStatusBoardRepository.findAllByPatientIdAndUserId(patientId, counselorId, pageable);
+	}
+	
+	@Transactional
+	public void 차트작성(PatientStatusBoard patientStatusBoard, int patientId, User counselor) {//title, content
+		Patient patient=patientRepository.findById(patientId).orElseThrow(()->{
+			return new IllegalArgumentException("환자 찾기 실패");
+		});
+		patientStatusBoard.setPatient(patient);
+		patientStatusBoard.setUser(counselor);
+		patientStatusBoardRepository.save(patientStatusBoard);
+		
+	}
+	@Transactional(readOnly=true)
+	public PatientStatusBoard 차트상세보기(int id) {
+		return patientStatusBoardRepository.findById(id)
+				.orElseThrow(()->{
+					return new IllegalArgumentException("글 상세보기 실패 : 아이디를 찾을 수 없습니다.");
+				});
+	}
+	@Transactional
+	public void 차트수정하기(int id, PatientStatusBoard requestPatientStatusBoard) {
+		PatientStatusBoard patientStatusBoard = patientStatusBoardRepository.findById(id)
+				.orElseThrow(()->{
+					return new IllegalArgumentException("글 찾기 실패 : 아이디를 찾을 수 없습니다.");
+				});//영속화 완료
+		patientStatusBoard.setPatientContent(requestPatientStatusBoard.getPatientContent());
+		patientStatusBoard.setPatientStatus(requestPatientStatusBoard.getPatientStatus());
+		patientStatusBoard.setPrescription(requestPatientStatusBoard.getPrescription());
+		patientStatusBoard.setTreatmentPlan(requestPatientStatusBoard.getTreatmentPlan());
+		//해당 함수로 종료시 (service가 종료될 때) 트랜잭션이 종료됨. 이때 더티체킹 - 자동업데이트가 flush
+	}
+}

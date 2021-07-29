@@ -1,0 +1,91 @@
+let adminIndex = {
+	init: function() {
+		$("#btn-counselor-matching").on("click", () => {
+			this.counselorMatching();
+		});
+		$("#btn-counselor-chartSave").on("click", () => {
+			this.counselorChartSave();
+		});
+		$("#btn-counselor-update").on("click", () => {
+			this.counselorReviewUpdate();
+		})
+	},
+	counselorMatching: function() {
+		let patientId = $("#patientId").val();
+
+		$.ajax({
+			type: "PUT",
+			url: "/counselor/api/matching/" + patientId,
+			contentType: "application/json; charset=utf-8",
+			dataType: "json"
+		}).done(function(resp) {
+			alert("매칭완료.");
+			location.href = "/counselor";
+		}).fail(function(error) {
+			alert(JSON.stringify(error));
+		});
+	},
+	counselorChartSave: function() {
+		let patientId = $("#patientId").val();
+		let counselorId = $("#userId").val();
+		alert('환자차트 작성 호출');
+		let data = {
+			patientStatus: $("#patientStatus").val(),
+			patientContent: $("#patientContent").val(),
+			prescription: $("#prescription").val(),
+			treatmentPlan: $("#treatmentPlan").val()
+		};
+		$.ajax({
+			type: "POST",
+			url: "/counselor/api/patientStatus/" + patientId + "/" + counselorId + "/reviewSave",
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json"
+		}).done(function(resp) {
+			alert("글쓰기가 완료되었습니다.");
+			location.href = "/counselor/patientStatus/" + patientId + "/" + counselorId + "/review";
+		}).fail(function(error) {
+			alert(JSON.stringify(error));
+		});
+	},
+	counselorReviewUpdate: function() {
+		let id = $("#id").val();
+
+		let data = {
+			patientStatus: $("#patientStatus").val(),
+			patientContent: $("#patientContent").val(),
+			prescription: $("#prescription").val(),
+			treatmentPlan: $("#treatmentPlan").val()
+		};
+		$.ajax({
+			type: "PUT",
+			url: "/counselor/api/patientStatus/" + id + "/reviewUpdate",
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json"
+		}).done(function(resp) {
+			alert("글수정이 완료되었습니다.");
+			location.href = "/counselor/patientStatus/" + id;
+		}).fail(function(error) {
+			alert(JSON.stringify(error));
+		});
+	},
+	reviewDelete: function() {
+		let id = $("#id").text();
+		let patientId = $("#patientId").val();
+		let counselorId = $("#userId").val();
+
+		$.ajax({
+			type: "DELETE",
+			url: "/counselor/api/patientStatus/"+ id +"/reviewDelete",
+			dataType: "json"
+		}).done(function(resp) {
+			alert("삭제가 완료되었습니다.");
+			location.href = "/counselor/patientStatus/" + patientId + "/" + counselorId + "/review";
+		}).fail(function(error) {
+			alert(JSON.stringify(error));
+		});
+	},
+}
+
+adminIndex.init();
